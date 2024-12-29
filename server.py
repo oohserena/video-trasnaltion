@@ -9,15 +9,18 @@ class VideoTranslationServer:
         self.delay = delay
         self.start_time = time.time()
         self.status = "pending"
+        self.status_changed = False  # Track if status has changed already
 
     def check_status(self):
         # Checks the current status of the video translation process
         elapsed_time = time.time() - self.start_time
-        if elapsed_time > self.delay:
+        if elapsed_time > self.delay and not self.status_changed:
             if self.status == "pending":
                 self.status = random.choice(["completed", "error"])
-        logging.info(f"Status changed to: {self.status}") 
+                self.status_changed = True  # Prevent further status change
+        logging.info(f"Elapsed time: {elapsed_time}s, Delay: {self.delay}s, Status changed to: {self.status}") 
         return self.status
+
 
 class VideoTranslationApp:
     # Flask app for the video translation server
